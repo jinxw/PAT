@@ -7,7 +7,7 @@ class node{
 public:
 	node()=default;
 	friend ostream &operator<<(ostream &,const node &);
-	friend istream &operator>>(ostream &,node &);
+	friend istream &operator>>(istream &,node &);
 private:
 	int address;
 	int data;
@@ -49,7 +49,7 @@ int main()
 	// std::list<node> ln = {node(1000,1,1001)};
 	// printLn(ln,k);
 	node tmp();
-	std::cin>>tmp;
-	std::cout<<tmp;
+	//std::cin>>tmp;
+	//std::cout<<tmp;
 	return 0;
 }
