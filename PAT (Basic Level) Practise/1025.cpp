@@ -2,11 +2,23 @@
 #include <list>
 #include <vector>
 #include <algorithm>
-struct node{
+class node{
+public:
+	friend ostream &operator<<(ostream &,const node &);
+	friend istream &operator>>(ostream &,node &);
+private:
 	int address;
 	int data;
 	int next;
 };
+ostream &operator<<(ostream &os,const node &n){
+	os<<n.address<<" "<<n.data<<" "<<n.next;
+	return os;
+}
+istream &operator>>(istream &is,node &n){
+	is>>n.address>>n.data>>n.next;	//没有处理可能失败的情况
+	return is;
+}
 std::list<node> & ReadNode(std::istream &in,std::size_t n){
 	std::list<node> ln();
 	for(std::size_t i = 0;i<n;i++){
