@@ -14,6 +14,9 @@ public:
 	int get_next() const {
 		return this->next;
 	}
+	void set_next(int n) {
+		next = n;
+	}
 private:
 	int address;
 	int data;
@@ -68,6 +71,14 @@ int main()
 		}
 		++iter;
 	}
+
+	auto first = ln.begin(),second = ++ln.begin();
+	while(second!=ln.end()){
+		first->set_next(second->get_address());
+		++first;
+		++second;
+	}
+	first->set_next(-1);
 
 	for(auto &n:ln){
 		std::cout<<n<<std::endl;
