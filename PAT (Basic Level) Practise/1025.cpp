@@ -42,6 +42,7 @@ std::list<node>::iterator ln_iter_add (std::list<node>::iterator iter,std::size_
 
 int main()
 {
+	std::ios::sync_with_stdio(false);
 	int first_address,n,k;
 	std::cin>>first_address>>n>>k;
 
