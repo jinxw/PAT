@@ -1,7 +1,7 @@
 #include<iostream>
-//#include<cstdio>
 #include<vector>
 #include<algorithm>
+
 int main(){
     std::size_t n;
     long long p;
@@ -14,18 +14,17 @@ int main(){
     }
     std::sort(vn.begin(),vn.end()); //按从小到大排序
 
-    auto min_iter = vn.begin();
-    std::size_t max = 1;
-    while(true){
-        auto min = *min_iter;
-        auto first_big_iter = std::find_if(vn.begin(),vn.end(),[min,p](const long long &n){return n>min*p;});   //这里还可以优化，自己用迭代器来找
-        std::size_t num = first_big_iter - min_iter;
-        std::cout<<num<<std::endl;  //test
-        max = num>max?num:max;
-        ++min_iter;
-        if(first_big_iter==vn.end()||vn.end()-min_iter<=max)
-            break;
+    auto it1 = vn.begin();
+    auto it2 = it1;
+    std::size_t cnt = 1;
+    while(it2!=vn.end() && vn.end()-it1>cnt){
+        while(it2!=vn.end() && *it2<=*it1*p){
+            ++it2;
+        }
+        std::size_t num = it2 - it1;
+        cnt = num>cnt?num:cnt;
+        ++it1;
     }
-    std::cout<<max<<std::endl;
+    std::cout<<cnt<<std::endl;
     return 0;
 }
