@@ -2,9 +2,9 @@
 #include <string>
 #include <cmath>
 
-bool isPalindromic(std::string &);
-std::string & reverse(std::string &);
-std::string & add(std::string &, std::string &);
+bool isPalindromic(const std::string &);
+const std::string reverse(const std::string &);
+const std::string add(const std::string &, const std::string &);
 
 int main(){
 	std::string s;
@@ -29,7 +29,7 @@ int main(){
 	return 0;
 }
 
-bool isPalindromic(std::string &s){
+bool isPalindromic(const std::string &s){
 	for(std::size_t pos = 0; pos!=ceil(s.size()*0.5); ++pos){
 		if(s[pos] != s[s.size()-pos-1])
 			return false;
@@ -37,4 +37,26 @@ bool isPalindromic(std::string &s){
 	return true;
 }
 
-std::string & reverse(std::string &)
+const std::string reverse(const std::string &s){
+	std::string rs(s.crbegin(),s.crend());
+	return rs;
+}
+
+const std::string add(const std::string &lhs, const std::string &rhs){
+	std::string s;
+	int jinwei = 0;
+	for(std::size_t pos=0;pos<lhs.size() && pos<rhs.size();++pos){
+		int a = lhs[lhs.size()-1-pos] - '0';
+		int b = rhs[rhs.size()-1-pos] - '0';
+		int sum = a+b+jinwei;
+		if(sum>9){
+			sum -= 10;
+			jinwei = 1;
+		}else{
+			jinwei = 0;
+		}
+		s.insert(s.begin(),sum);
+	}
+	return s;
+}
+
