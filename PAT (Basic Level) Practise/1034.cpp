@@ -1,9 +1,13 @@
 #include <iostream>
 
+long long gcd(long long t1, long long t2) {
+    return t2 == 0 ? t1 : gcd(t2, t1 % t2);
+}
+
 class Fraction{
 public:
     Fraction() = default;
-    Fraction(int n,int m):n(n),m(m){};
+    Fraction(long long n,long long m):n(n),m(m){};
     const Fraction operator+(const Fraction &) const;
     const Fraction operator-(const Fraction &) const;
     const Fraction operator*(const Fraction &) const;
@@ -14,13 +18,17 @@ public:
 	bool isZero();
 private:
     int minus = 1;  //1正 -1负 
-    int n;
-    int m;
+    long long n;
+    long long m;
 };
 const Fraction Fraction::operator+(const Fraction &rhs) const{
     Fraction sum;
     sum.n = this->minus*this->n*rhs.m + this->m*rhs.n*rhs.minus;
     sum.m = this->m*rhs.m;
+    if(sum.n < 0){
+        sum.n *= -1;
+        sum.minus = -1;
+    }
     sum.toIrreducible();
     return sum;
 }
@@ -39,6 +47,7 @@ const Fraction Fraction::operator*(const Fraction &rhs) const{
 }
 const Fraction Fraction::operator/(const Fraction &rhs) const{
     Fraction tmp(rhs.m,rhs.n);
+    tmp.minus = rhs.minus;
     tmp.toIrreducible();
     return this->operator*(tmp);
 }
@@ -72,15 +81,9 @@ std::ostream &operator<<(std::ostream &os,const Fraction &f){
     return os;
 }
 void Fraction::toIrreducible(){
-    //this->k += this->n / this->m;
-    //this->n %= this->m;
-    for(int i=this->n;i>=2;--i){    //可优化
-        if(this->n%i==0 && this->m%i==0){
-            this->n /= i;
-            this->m /= i;
-            break;
-        }
-    }
+    long long i = gcd(this->m,this->n);
+    this->n /= i;
+    this->m /= i;
 }
 bool Fraction::isZero(){
 	if(this->n == 0)
@@ -98,7 +101,7 @@ int main(){
     std::cout<<a<<" - "<<b<<" = "<<a-b<<std::endl;
     std::cout<<a<<" * "<<b<<" = "<<a*b<<std::endl;
 	if(b.isZero())
-    	std::cout<<a<<" / "<<b<<" = "<<a/b<<std::endl;
+    	std::cout<<a<<" / "<<b<<" = "<<"Inf"<<std::endl;
 	else
 		std::cout<<a<<" / "<<b<<" = "<<a/b<<std::endl;
     return 0;
