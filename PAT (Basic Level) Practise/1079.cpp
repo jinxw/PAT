@@ -2,52 +2,36 @@
 #include <string>
 #include <cmath>
 
-bool isPalindromic(const std::string &);
-const std::string reverse(const std::string &);
-const std::string add(const std::string &, const std::string &);
-
-int main(){
+class BigNumber{
+public:
+	BigNumber() = default;
+	BigNumber(const std::string &str):s(str){};
+	bool isPalindromic();
+	const BigNumber reverse() const;
+	const BigNumber operator+(const BigNumber &);
+	friend std::istream &operator>>(std::istream &,BigNumber &);
+	friend std::ostream &operator<<(std::ostream &,const BigNumber &);
+private:
 	std::string s;
-	std::cin>>s;
-	std::string a = s;
-	std::size_t i;
-	for(i=0;i<10;++i){
-		std::string b = reverse(a);
-		std::string c = add(a,b);
-		std::cout<<a<<" + "<<b<<" = "<<c<<std::endl;
-		if(isPalindromic(c)){
-			break;
-		}else{
-			a = c;
-		}
-	}
-	if(i != 10){
-		std::cout<<s<<" is a palindromic number."<<std::endl;
-	}else{
-		std::cout<<"Not found in 10 iterations."<<std::endl;
-	}
-	return 0;
-}
-
-bool isPalindromic(const std::string &s){
-	for(std::size_t pos = 0; pos!=ceil(s.size()*0.5); ++pos){
-		if(s[pos] != s[s.size()-pos-1])
+};
+bool BigNumber::isPalindromic(){
+	for(std::size_t pos = 0; pos!=ceil(this->s.size()*0.5); ++pos){
+		if(this->s[pos] != this->s[this->s.size()-pos-1])
 			return false;
 	}
 	return true;
 }
-
-const std::string reverse(const std::string &s){
-	std::string rs(s.crbegin(),s.crend());
-	return rs;
+const BigNumber BigNumber::reverse() const{
+	std::string rs(this->s.crbegin(),this->s.crend());
+	BigNumber rb(rs);
+	return rb;
 }
-
-const std::string add(const std::string &lhs, const std::string &rhs){
+const BigNumber BigNumber::operator+(const BigNumber &rhs){
 	std::string s;
 	int jinwei = 0;
-	for(std::size_t pos=0;pos<lhs.size() && pos<rhs.size();++pos){
-		int a = lhs[lhs.size()-1-pos] - '0';
-		int b = rhs[rhs.size()-1-pos] - '0';
+	for(std::size_t pos=0;pos<this->s.size() && pos<rhs.s.size();++pos){
+		int a = this->s[this->s.size()-1-pos] - '0';
+		int b = rhs.s[rhs.s.size()-1-pos] - '0';
 		int sum = a+b+jinwei;
 		if(sum>9){
 			sum -= 10;
@@ -55,8 +39,38 @@ const std::string add(const std::string &lhs, const std::string &rhs){
 		}else{
 			jinwei = 0;
 		}
-		s.insert(s.begin(),sum);
+		s.insert(s.begin(),sum+'0');
 	}
-	return s;
+	if(jinwei == 1){
+		s.insert(s.begin(),'1');
+	}
+	BigNumber sum(s);
+	return sum;
+}
+std::istream &operator>>(std::istream &is,BigNumber &bn){
+	is>>bn.s;
+	return is;
+}
+std::ostream &operator<<(std::ostream &os,const BigNumber &bn){
+	//os<<bn.s.substr(bn.s.find_first_not_of('0'));	//开头的0不需要去掉
+	os<<bn.s;
+	return os;
 }
 
+int main(){
+	BigNumber a;
+	std::cin>>a;
+	std::size_t i;
+	for(i=0;i<10 && !a.isPalindromic();++i){
+		BigNumber b = a.reverse();
+		BigNumber c = a+b;
+		std::cout<<a<<" + "<<b<<" = "<<c<<std::endl;
+		a = c;
+	}
+	if(i != 10){
+		std::cout<<a<<" is a palindromic number."<<std::endl;
+	}else{
+		std::cout<<"Not found in 10 iterations."<<std::endl;
+	}
+	return 0;
+}
