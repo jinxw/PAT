@@ -1,64 +1,70 @@
-#include <iostream>
 #include <cstdio>
 #include <vector>
-#include <utility>
 #include <map>
-#include <math.h>
+#include <utility>
+#include <array>
+#include <cmath>
+
+bool check_tol(std::pair<int,int> &,std::vector<std::vector<int>> &,int);
 
 int main(){
     int m,n,tol;
-    std::cin>>m>>n>>tol;
-    std::vector<std::vector<std::pair<int,bool>>> color(n,std::vector<std::pair<int,bool>>(m));
+    scanf("%d%d%d",&m,&n,&tol);
+    std::vector<std::vector<int>> color(n,std::vector<int>(m));
+    std::map<int,std::pair<int,int>> color2coor;    //快速通过颜色找到坐标
+    std::map<int,int> color_cnt;    //记录颜色出现次数
     for(int i=0;i<n;++i){
         for(int j=0;j<m;++j){
-            std::cin>>color[i][j].first;
-            color[i][j].second = true;
-            if(i!=0 && j!=0 && fabs(color[i-1][j-1].first-color[i][j].first)<=tol){
-                color[i-1][j-1].second = false;
-                color[i][j].second = false;
-            }
-            if(i!=0 && fabs(color[i-1][j].first-color[i][j].first)<=tol){
-                color[i-1][j].second = false;
-                color[i][j].second = false;
-            }
-            if(j!=0 && fabs(color[i][j-1].first-color[i][j].first)<=tol){
-                color[i][j-1].second = false;
-                color[i][j].second = false;
-            }
-            if(i!=0 && j!=m-1 && fabs(color[i-1][j+1].first-color[i][j].first)<=tol){
-                color[i-1][j+1].second = false;
-                color[i][j].second = false;
+            scanf("%d",&color[i][j]);
+            color2coor[color[i][j]] = std::make_pair(i,j);
+            color_cnt[color[i][j]]++;
+        }
+    }
+    std::vector<int> v;
+    for(const auto &c:color_cnt){
+        if(c.second == 1){
+            if(check_tol(color2coor[c.first],color,tol)){
+                v.push_back(c.first);
             }
         }
     }
-    std::map<int,int> big_point;
-    for(int i=0;i<n;++i){
-        for(int j=0;j<m;++j){
-            if(color[i][j].second){
-                big_point[color[i][j].first]++;
-            }
-        }
-    }
-    int unique_color_cnt = 0;
-    int last_unique_color;
-    for(auto &p:big_point){
-        if(p.second == 1){
-            unique_color_cnt++;
-            last_unique_color = p.first;
-        }
-    }
-    if(unique_color_cnt == 0){
+    if(v.size()==0){
         puts("Not Exist");
-    }else if(unique_color_cnt > 1){
+    }else if(v.size()>1){
         puts("Not Unique");
     }else{
-        for(int i=0;i<n;++i){
-            for(int j=0;j<m;++j){
-                if(color[i][j].first == last_unique_color){
-                    printf("(%d, %d): %d\n",j+1,i+1,last_unique_color);
-                }
-            }
-        }
+        printf("(%d, %d): %d\n",color2coor[v[0]].second+1,color2coor[v[0]].first+1,v[0]);
     }
     return 0;
+}
+
+bool check_tol(std::pair<int,int> &coor,std::vector<std::vector<int>> &color,int tol){
+    const auto &x = coor.first;
+    const auto &y = coor.second;
+    //也可用一个[8][2]的数组来写
+    if(x!=0 && y!=0 && abs(color[x][y]-color[x-1][y-1])<=tol){
+        return false;
+    }
+    if(x!=0 && abs(color[x][y]-color[x-1][y])<=tol){
+        return false;
+    }
+    if(x!=0 && y!=color[0].size()-1 && abs(color[x][y]-color[x-1][y+1])<=tol){
+        return false;
+    }
+    if(y!=0 && abs(color[x][y]-color[x][y-1])<=tol){
+        return false;
+    }
+    if(y!=color[0].size()-1 && abs(color[x][y]-color[x][y+1])<=tol){
+        return false;
+    }
+    if(x!=color.size()-1 && y!=0 && abs(color[x][y]-color[x+1][y-1])<=tol){
+        return false;
+    }
+    if(x!=color.size()-1 && abs(color[x][y]-color[x+1][y])<=tol){
+        return false;
+    }
+    if(x!=color.size()-1 && y!=color[0].size()-1 && abs(color[x][y]-color[x+1][y+1])<=tol){
+        return false;
+    }
+    return true;
 }
