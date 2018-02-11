@@ -29,6 +29,10 @@ const Polynomials Polynomials::operator*(const Polynomials &rhs) const{
 			res.n[i.first+j.first] += i.second * j.second;
 		}
 	}
+    for(auto &i:res.n){
+        if(i.second == 0)
+            res.n.erase(i.first);
+    }
 	res.k = res.n.size();
 	return res;
 }
