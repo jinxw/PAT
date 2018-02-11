@@ -23,7 +23,14 @@ const Polynomials Polynomials::operator+(const Polynomials &rhs) const{
     return sum;
 }
 const Polynomials Polynomials::operator*(const Polynomials &rhs) const{
-    
+	Polynomials res;
+	for(auto &i:this->n){
+		for(auto &j:rhs.n){
+			res.n[i.first+j.first] += i.second * j.second;
+		}
+	}
+	res.k = res.n.size();
+	return res;
 }
 std::istream &operator>>(std::istream &is,Polynomials &p){
     is>>p.k;
@@ -41,4 +48,11 @@ std::ostream &operator<<(std::ostream &os,const Polynomials &p){
         os<<std::fixed<<std::setprecision(1)<<" "<<it->first<<" "<<it->second;
     }
     return os;
+}
+
+int main(){
+	Polynomials a,b;
+	std::cin>>a>>b;
+	std::cout<<a*b<<std::endl;
+	return 0;
 }
